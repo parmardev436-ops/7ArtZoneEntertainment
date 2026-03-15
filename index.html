@@ -34,15 +34,12 @@
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{font-size:16px;scroll-behavior:smooth}
-body{background:var(--ink);color:var(--cream);font-family:var(--ff-u);overflow-x:hidden;cursor:none}
+body{background:var(--ink);color:var(--cream);font-family:var(--ff-u);overflow-x:hidden}
 a{color:inherit;text-decoration:none}
-button{cursor:none;font-family:inherit}
+button{cursor:pointer;font-family:inherit}
 input,select,textarea{font-family:inherit}
 
-/* cursor */
-#cur{position:fixed;z-index:9999;width:10px;height:10px;background:var(--gold);border-radius:50%;pointer-events:none;transform:translate(-50%,-50%);transition:width .3s,height .3s,opacity .3s;mix-blend-mode:difference}
-#cur.big{width:44px;height:44px}
-#cur.hidden{opacity:0}
+/* cursor removed — using default browser cursor */
 
 /* noise */
 body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");opacity:.022;pointer-events:none;z-index:999}
@@ -139,7 +136,7 @@ h1.hero-h span.out{display:block;-webkit-text-stroke:1px rgba(240,232,208,.18);c
 
 /* movies grid */
 .movies-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--bord2)}
-.mv-card{background:var(--dark);position:relative;overflow:hidden;cursor:none;display:flex;flex-direction:column;justify-content:flex-end;padding:1.5rem;aspect-ratio:2/3}
+.mv-card{background:var(--dark);position:relative;overflow:hidden;cursor:pointer;display:flex;flex-direction:column;justify-content:flex-end;padding:1.5rem;aspect-ratio:2/3}
 .mv-card.wide{grid-column:span 2;aspect-ratio:16/9}
 .mv-bg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
 .mv-letter{font-family:var(--ff-d);font-size:10rem;font-weight:700;color:rgba(201,168,76,.05);letter-spacing:-.05em;user-select:none}
@@ -156,7 +153,7 @@ h1.hero-h span.out{display:block;-webkit-text-stroke:1px rgba(240,232,208,.18);c
 
 /* portfolio tiles */
 .port-grid{display:grid;grid-template-columns:repeat(12,1fr);grid-auto-rows:70px;gap:2px;background:var(--bord2)}
-.ptile{background:var(--dark);position:relative;overflow:hidden;cursor:none;display:flex;align-items:flex-end;padding:.9rem}
+.ptile{background:var(--dark);position:relative;overflow:hidden;cursor:pointer;display:flex;align-items:flex-end;padding:.9rem}
 .ptile:nth-child(1){grid-column:span 7;grid-row:span 5}
 .ptile:nth-child(2){grid-column:span 5;grid-row:span 3}
 .ptile:nth-child(3){grid-column:span 5;grid-row:span 2}
@@ -342,8 +339,7 @@ footer{background:var(--dark);border-top:1px solid var(--bord2);padding:4rem 3.5
 </head>
 <body>
 
-<!-- CURSOR -->
-<div id="cur"></div>
+<!-- cursor removed -->
 
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
@@ -805,15 +801,7 @@ footer{background:var(--dark);border-top:1px solid var(--bord2);padding:4rem 3.5
 /* ════════════════════════════════════
    CURSOR
 ════════════════════════════════════ */
-const cur = document.getElementById('cur');
-document.addEventListener('mousemove', e => {
-  cur.style.left = e.clientX + 'px';
-  cur.style.top  = e.clientY + 'px';
-});
-document.querySelectorAll('a,button,.svc-row,.mv-card,.ptile,.ap,.ci').forEach(el => {
-  el.addEventListener('mouseenter', () => cur.classList.add('big'));
-  el.addEventListener('mouseleave', () => cur.classList.remove('big'));
-});
+/* cursor JS removed */
 
 /* ════════════════════════════════════
    NAV
