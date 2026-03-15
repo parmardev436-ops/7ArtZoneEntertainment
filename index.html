@@ -1,0 +1,1353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>7ArtZone Entertainment Pvt. Ltd.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+/* ═══════════════════════════════════════ TOKENS */
+:root {
+  --ink:    #07060400;
+  --ink:    #080704;
+  --dark:   #0E0C08;
+  --dark2:  #141008;
+  --dark3:  #1C1810;
+  --surf:   #221D10;
+  --surf2:  #2A2418;
+  --gold:   #C9A84C;
+  --gold2:  #E8C97A;
+  --goldD:  #8A6E28;
+  --goldPL: #F5EDCC;
+  --goldGL: rgba(201,168,76,0.12);
+  --cream:  #F0E8D0;
+  --muted:  #8A8070;
+  --faint:  #4A4438;
+  --border: rgba(201,168,76,0.16);
+  --bord2:  rgba(201,168,76,0.07);
+  --ff-d:   'Cormorant Garamond', serif;
+  --ff-u:   'Syne', sans-serif;
+  --ff-m:   'DM Mono', monospace;
+  --ease:   cubic-bezier(0.16,1,0.3,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth}
+body{background:var(--ink);color:var(--cream);font-family:var(--ff-u);overflow-x:hidden;cursor:none}
+a{color:inherit;text-decoration:none}
+button{cursor:none;font-family:inherit}
+input,select,textarea{font-family:inherit}
+
+/* cursor */
+#cur{position:fixed;z-index:9999;width:10px;height:10px;background:var(--gold);border-radius:50%;pointer-events:none;transform:translate(-50%,-50%);transition:width .3s,height .3s,opacity .3s;mix-blend-mode:difference}
+#cur.big{width:44px;height:44px}
+#cur.hidden{opacity:0}
+
+/* noise */
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");opacity:.022;pointer-events:none;z-index:999}
+
+/* ═══════════════════════════════════════ NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:800;height:68px;display:flex;align-items:center;justify-content:space-between;padding:0 3.5rem;border-bottom:1px solid transparent;transition:all .4s}
+nav.solid{background:rgba(8,7,4,.94);backdrop-filter:blur(18px);border-color:var(--border)}
+.nav-logo{display:flex;align-items:center;gap:10px;font-family:var(--ff-d);font-size:1.5rem;font-weight:700;color:var(--gold);letter-spacing:.03em}
+.logo-sq{width:30px;height:30px;border:1.5px solid var(--gold);display:flex;align-items:center;justify-content:center;font-family:var(--ff-m);font-size:.58rem;color:var(--gold);flex-shrink:0}
+.nav-links{display:flex;align-items:center;gap:2.2rem;list-style:none}
+.nav-links a{font-family:var(--ff-m);font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);transition:color .2s;position:relative}
+.nav-links a::after{content:'';position:absolute;bottom:-3px;left:0;right:0;height:1px;background:var(--gold);transform:scaleX(0);transform-origin:left;transition:transform .3s var(--ease)}
+.nav-links a:hover,.nav-links a.on{color:var(--gold)}
+.nav-links a:hover::after,.nav-links a.on::after{transform:scaleX(1)}
+.nav-cta-btn{padding:8px 20px;border:1px solid var(--goldD);color:var(--gold);font-family:var(--ff-m);font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;background:none;transition:all .2s}
+.nav-cta-btn:hover{background:var(--goldGL);border-color:var(--gold)}
+.ham{display:none;flex-direction:column;gap:5px;background:none;border:none;padding:4px}
+.ham span{display:block;width:22px;height:1.5px;background:var(--gold)}
+
+/* ═══════════════════════════════════════ PAGE SYSTEM */
+.pg{display:none}.pg.on{display:block}
+
+/* ═══════════════════════════════════════ HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:flex-end;padding:0 3.5rem 5rem;position:relative;overflow:hidden}
+.hero-glow{position:absolute;top:20%;right:5%;width:50vw;height:60vh;background:radial-gradient(ellipse,rgba(201,168,76,.07) 0%,transparent 70%);pointer-events:none}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(var(--bord2) 1px,transparent 1px),linear-gradient(90deg,var(--bord2) 1px,transparent 1px);background-size:72px 72px;mask-image:radial-gradient(ellipse 60% 60% at 55% 45%,black,transparent);pointer-events:none}
+.hero-verttext{position:absolute;right:3.5rem;top:50%;transform:translateY(-50%);font-family:var(--ff-m);font-size:.58rem;letter-spacing:.18em;color:var(--faint);writing-mode:vertical-rl;transform:translateY(-50%) rotate(180deg)}
+.hero-tag{display:inline-flex;align-items:center;gap:10px;font-family:var(--ff-m);font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--goldD);margin-bottom:1.8rem;opacity:0;animation:fup .7s .6s var(--ease) forwards}
+.hero-tag::before{content:'';width:36px;height:1px;background:var(--gold)}
+h1.hero-h{font-family:var(--ff-d);font-size:clamp(4rem,10vw,9.5rem);font-weight:300;line-height:.9;letter-spacing:-.02em;color:var(--cream);margin-bottom:3rem;opacity:0;animation:fup .8s .8s var(--ease) forwards}
+h1.hero-h em{font-style:italic;color:var(--gold);display:block}
+h1.hero-h span.out{display:block;-webkit-text-stroke:1px rgba(240,232,208,.18);color:transparent;font-weight:600}
+.hero-foot{display:flex;align-items:flex-end;justify-content:space-between;gap:2rem;opacity:0;animation:fup .7s 1s var(--ease) forwards}
+.hero-desc{max-width:420px;font-size:.95rem;line-height:1.85;color:var(--muted)}
+.hero-btns{display:flex;gap:1rem}
+.btn-gold{display:inline-flex;align-items:center;gap:8px;padding:13px 30px;background:var(--gold);color:var(--ink);font-family:var(--ff-m);font-size:.68rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase;border:none;transition:background .2s,transform .2s;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px))}
+.btn-gold:hover{background:var(--gold2);transform:translateY(-2px)}
+.btn-ghost{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;border:1px solid var(--border);color:var(--muted);font-family:var(--ff-m);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;background:none;transition:all .2s}
+.btn-ghost:hover{border-color:var(--gold);color:var(--gold)}
+.hero-stats{display:flex;gap:0;margin-top:3rem;padding-top:2rem;border-top:1px solid var(--border);opacity:0;animation:fup .7s 1.15s var(--ease) forwards}
+.hstat{flex:1;padding-right:2rem;border-right:1px solid var(--border)}
+.hstat:last-child{border-right:none}
+.hstat-n{font-family:var(--ff-d);font-size:3.2rem;font-weight:300;color:var(--gold);line-height:1}
+.hstat-l{font-family:var(--ff-m);font-size:.56rem;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;margin-top:4px}
+.scroll-cue{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;opacity:0;animation:fup .6s 1.3s var(--ease) forwards}
+.scroll-cue i{width:1px;height:50px;background:linear-gradient(to bottom,var(--gold),transparent);animation:spulse 2s ease-in-out infinite}
+.scroll-cue span{font-family:var(--ff-m);font-size:.55rem;letter-spacing:.2em;color:var(--faint);text-transform:uppercase;transform:rotate(90deg);white-space:nowrap}
+@keyframes spulse{0%,100%{opacity:.3}50%{opacity:1}}
+
+/* ticker */
+.ticker-wrap{overflow:hidden;background:var(--surf);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:11px 0}
+.ticker-inner{display:flex;white-space:nowrap;animation:tmove 28s linear infinite}
+.tick{display:inline-flex;align-items:center;gap:1.4rem;padding:0 1.4rem;font-family:var(--ff-d);font-size:.95rem;font-style:italic;color:var(--muted)}
+.tick-dot{width:5px;height:5px;border-radius:50%;background:var(--gold);opacity:.5;flex-shrink:0}
+@keyframes tmove{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ═══════════════════════════════════════ SECTIONS */
+.sec{padding:7rem 3.5rem;position:relative}
+.sec-tag{display:inline-flex;align-items:center;gap:10px;font-family:var(--ff-m);font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;color:var(--goldD);margin-bottom:1.2rem}
+.sec-tag::before{content:'';width:28px;height:1px;background:var(--gold)}
+.sec-h{font-family:var(--ff-d);font-size:clamp(2.6rem,5vw,4.5rem);font-weight:300;line-height:1.02;margin-bottom:1.5rem}
+.sec-h em{font-style:italic;color:var(--gold)}
+.gold-div{width:56px;height:1px;background:linear-gradient(to right,var(--gold),transparent);margin:1.2rem 0 2.5rem}
+
+/* about */
+.about-wrap{display:grid;grid-template-columns:1fr 1fr;gap:6rem;align-items:center}
+.about-vis{position:relative;aspect-ratio:4/5}
+.about-frame{position:absolute;inset:0;border:1px solid var(--border);transform:translate(14px,14px)}
+.about-box{position:absolute;inset:0;background:var(--dark2);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.about-ghost{font-family:var(--ff-d);font-size:9rem;font-weight:700;color:rgba(201,168,76,.06);letter-spacing:-.05em;user-select:none}
+.about-tag{position:absolute;bottom:-14px;right:-14px;width:110px;height:110px;background:var(--gold);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,14px 100%,0 calc(100% - 14px))}
+.about-tag-n{font-family:var(--ff-d);font-size:2.2rem;font-weight:700;color:var(--ink);line-height:1}
+.about-tag-l{font-family:var(--ff-m);font-size:.5rem;color:var(--ink);letter-spacing:.08em;text-transform:uppercase;text-align:center;line-height:1.4}
+.about-body p{font-size:.95rem;line-height:1.85;color:var(--muted);margin-bottom:1.1rem}
+.about-body p strong{color:var(--cream)}
+.about-pillars{display:grid;grid-template-columns:1fr 1fr;gap:1px;margin-top:2rem;background:var(--border)}
+.ap{background:var(--ink);padding:1rem 1.1rem;border-left:2px solid transparent;transition:border-color .2s}
+.ap:hover{border-color:var(--gold)}
+.ap-l{font-family:var(--ff-m);font-size:.56rem;letter-spacing:.14em;color:var(--goldD);text-transform:uppercase;margin-bottom:4px}
+.ap-v{font-size:.92rem;font-weight:600;color:var(--cream)}
+
+/* services */
+.svc-row{display:grid;grid-template-columns:52px 1fr auto;align-items:center;gap:2rem;padding:1.8rem 1.5rem;border-bottom:1px solid var(--bord2);position:relative;overflow:hidden;transition:background .25s}
+.svc-row::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--gold);transform:scaleY(0);transform-origin:bottom;transition:transform .3s var(--ease)}
+.svc-row:hover{background:rgba(201,168,76,.03)}
+.svc-row:hover::before{transform:scaleY(1)}
+.svc-n{font-family:var(--ff-d);font-size:2.2rem;font-weight:300;color:rgba(201,168,76,.1);transition:color .3s}
+.svc-row:hover .svc-n{color:rgba(201,168,76,.35)}
+.svc-name{font-family:var(--ff-d);font-size:clamp(1.5rem,3vw,2.5rem);font-weight:300;color:var(--cream);letter-spacing:-.01em;line-height:1}
+.svc-chips{display:flex;gap:5px;flex-wrap:wrap;margin-top:5px}
+.chip{font-family:var(--ff-m);font-size:.54rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:2px 8px;border:1px solid var(--bord2)}
+.svc-arr{font-size:1.3rem;color:var(--muted);transform:rotate(-45deg);transition:transform .3s var(--ease),color .2s}
+.svc-row:hover .svc-arr{transform:rotate(0deg);color:var(--gold)}
+
+/* movies grid */
+.movies-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--bord2)}
+.mv-card{background:var(--dark);position:relative;overflow:hidden;cursor:none;display:flex;flex-direction:column;justify-content:flex-end;padding:1.5rem;aspect-ratio:2/3}
+.mv-card.wide{grid-column:span 2;aspect-ratio:16/9}
+.mv-bg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.mv-letter{font-family:var(--ff-d);font-size:10rem;font-weight:700;color:rgba(201,168,76,.05);letter-spacing:-.05em;user-select:none}
+.mv-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(8,7,4,.95) 0%,rgba(8,7,4,.3) 55%,transparent 100%);transition:opacity .3s}
+.mv-card:hover .mv-overlay{opacity:.75}
+.mv-meta{position:relative;z-index:2}
+.mv-genre{font-family:var(--ff-m);font-size:.56rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:5px}
+.mv-title{font-family:var(--ff-d);font-size:clamp(1.1rem,2.5vw,1.8rem);font-weight:400;color:var(--cream);text-transform:none;line-height:1.1;margin-bottom:6px}
+.mv-status{display:inline-block;font-family:var(--ff-m);font-size:.52rem;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border:1px solid;color:var(--gold);border-color:var(--goldD);background:rgba(201,168,76,.08)}
+.mv-status.soon{color:#C8901A;border-color:#7A5510;background:rgba(200,144,26,.08)}
+.mv-status.dev{color:var(--muted);border-color:var(--faint);background:transparent}
+.mv-hover-icon{position:absolute;top:1.2rem;right:1.2rem;width:38px;height:38px;background:var(--gold);display:flex;align-items:center;justify-content:center;color:var(--ink);font-size:1rem;z-index:2;opacity:0;transform:scale(.7) rotate(-20deg);transition:all .3s var(--ease)}
+.mv-card:hover .mv-hover-icon{opacity:1;transform:scale(1) rotate(0)}
+
+/* portfolio tiles */
+.port-grid{display:grid;grid-template-columns:repeat(12,1fr);grid-auto-rows:70px;gap:2px;background:var(--bord2)}
+.ptile{background:var(--dark);position:relative;overflow:hidden;cursor:none;display:flex;align-items:flex-end;padding:.9rem}
+.ptile:nth-child(1){grid-column:span 7;grid-row:span 5}
+.ptile:nth-child(2){grid-column:span 5;grid-row:span 3}
+.ptile:nth-child(3){grid-column:span 5;grid-row:span 2}
+.ptile:nth-child(4){grid-column:span 4;grid-row:span 3}
+.ptile:nth-child(5){grid-column:span 4;grid-row:span 3}
+.ptile:nth-child(6){grid-column:span 4;grid-row:span 3}
+.ptile:nth-child(7){grid-column:span 5;grid-row:span 2}
+.ptile:nth-child(8){grid-column:span 7;grid-row:span 2}
+.ptile-bg{position:absolute;inset:0;transition:transform .6s var(--ease)}
+.ptile:hover .ptile-bg{transform:scale(1.04)}
+.ptile-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(8,7,4,.9) 0%,transparent 60%)}
+.ptile-ghost{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--ff-d);font-size:6rem;font-weight:700;color:rgba(201,168,76,.04);pointer-events:none}
+.ptile-meta{position:relative;z-index:2}
+.ptile-cat{font-family:var(--ff-m);font-size:.52rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:3px}
+.ptile-name{font-family:var(--ff-d);font-size:clamp(.9rem,1.8vw,1.4rem);color:var(--cream);font-weight:300;line-height:1.1}
+.tb1{background:linear-gradient(135deg,#100a00,#1e1200)}
+.tb2{background:linear-gradient(135deg,#080500,#160f00)}
+.tb3{background:linear-gradient(135deg,#0a0800,#181200)}
+.tb4{background:linear-gradient(135deg,#060400,#120e00)}
+.tb5{background:linear-gradient(135deg,#0e0800,#1e1200)}
+.tb6{background:linear-gradient(135deg,#080600,#141000)}
+.tb7{background:linear-gradient(135deg,#100a00,#1c1400)}
+.tb8{background:linear-gradient(135deg,#060400,#100c00)}
+
+/* contact */
+.contact-grid{display:grid;grid-template-columns:1fr 1.15fr;gap:5.5rem;align-items:start}
+.contact-items{margin-top:2.5rem;display:flex;flex-direction:column;gap:0}
+.ci{display:flex;align-items:flex-start;gap:1.2rem;padding:1.4rem 0;border-bottom:1px solid var(--bord2)}
+.ci:first-child{border-top:1px solid var(--bord2)}
+.ci-ic{width:38px;height:38px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0;margin-top:2px}
+.ci-lbl{font-family:var(--ff-m);font-size:.56rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.ci-val{font-size:.92rem;color:var(--cream)}
+
+/* form */
+.form-box{background:var(--dark);border:1px solid var(--bord2);padding:2.5rem;position:relative}
+.form-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(to right,var(--gold),var(--gold2),transparent)}
+.fg{display:flex;flex-direction:column;gap:5px;margin-bottom:.9rem}
+.fg label{font-family:var(--ff-m);font-size:.56rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.fg input,.fg select,.fg textarea{background:var(--dark2);border:1px solid var(--bord2);padding:10px 13px;color:var(--cream);font-size:.9rem;outline:none;width:100%;transition:border-color .2s}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--gold)}
+.fg input::placeholder,.fg textarea::placeholder{color:var(--faint)}
+.fg select option{background:var(--dark2)}
+.fg textarea{min-height:100px;resize:vertical}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.fsub{margin-top:1.2rem;width:100%;padding:13px;background:var(--gold);border:none;color:var(--ink);font-family:var(--ff-u);font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;transition:background .2s;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px))}
+.fsub:hover{background:var(--gold2)}
+
+/* footer */
+footer{background:var(--dark);border-top:1px solid var(--bord2);padding:4rem 3.5rem 2rem}
+.ft-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:3rem;margin-bottom:3rem;padding-bottom:3rem;border-bottom:1px solid var(--bord2)}
+.ft-nm{font-family:var(--ff-d);font-size:1.8rem;font-weight:700;color:var(--gold);margin-bottom:.8rem}
+.ft-p{font-size:.82rem;line-height:1.8;color:var(--muted);margin-bottom:1.4rem}
+.ft-col-h{font-family:var(--ff-m);font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:1.1rem}
+.ft-lks{list-style:none;display:flex;flex-direction:column;gap:.65rem}
+.ft-lks a{font-size:.85rem;color:var(--muted);transition:color .2s}
+.ft-lks a:hover{color:var(--gold)}
+.ft-socs{display:flex;gap:1px}
+.ft-soc{width:34px;height:34px;border:1px solid var(--bord2);display:flex;align-items:center;justify-content:center;font-family:var(--ff-m);font-size:.58rem;color:var(--muted);transition:all .2s}
+.ft-soc:hover{border-color:var(--gold);color:var(--gold)}
+.ft-bot{display:flex;justify-content:space-between;align-items:center}
+.ft-copy{font-family:var(--ff-m);font-size:.58rem;letter-spacing:.07em;color:var(--faint)}
+
+/* reveals */
+.r{opacity:0;transform:translateY(26px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
+.r.d1{transition-delay:.1s}.r.d2{transition-delay:.2s}.r.d3{transition-delay:.3s}
+.r.d4{transition-delay:.4s}.r.d5{transition-delay:.5s}
+.r.vis{opacity:1;transform:none}
+@keyframes fup{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+
+/* ═══════════════════════════════════════ ADMIN PORTAL */
+.admin-overlay{position:fixed;inset:0;z-index:2000;display:flex;align-items:center;justify-content:center;background:rgba(8,7,4,.92);backdrop-filter:blur(10px)}
+.admin-login-box{background:var(--dark);border:1px solid var(--border);padding:3rem;width:100%;max-width:420px;position:relative}
+.admin-login-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(to right,var(--gold),transparent)}
+.admin-logo{font-family:var(--ff-d);font-size:1.6rem;font-weight:700;color:var(--gold);margin-bottom:.4rem}
+.admin-sub{font-family:var(--ff-m);font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:2rem}
+.admin-err{font-family:var(--ff-m);font-size:.62rem;color:#e05050;margin-top:.8rem;display:none}
+
+/* admin dashboard */
+#adminDash{position:fixed;inset:0;z-index:1900;background:var(--dark);overflow-y:auto;display:none}
+.adash-nav{display:flex;align-items:center;justify-content:space-between;padding:1rem 2rem;background:var(--ink);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10}
+.adash-logo{font-family:var(--ff-d);font-size:1.3rem;font-weight:700;color:var(--gold)}
+.adash-logo span{font-family:var(--ff-m);font-size:.6rem;letter-spacing:.14em;color:var(--muted);margin-left:8px}
+.adash-tabs{display:flex;gap:2px}
+.atab{padding:7px 18px;background:none;border:1px solid var(--bord2);font-family:var(--ff-m);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);transition:all .2s}
+.atab.on,.atab:hover{border-color:var(--gold);color:var(--gold);background:var(--goldGL)}
+.adash-logout{padding:6px 16px;border:1px solid var(--bord2);font-family:var(--ff-m);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);background:none;transition:all .2s}
+.adash-logout:hover{border-color:#e05050;color:#e05050}
+.adash-body{padding:2rem}
+.adash-panel{display:none}.adash-panel.on{display:block}
+
+/* admin cards */
+.adash-h{font-family:var(--ff-d);font-size:1.8rem;font-weight:300;color:var(--cream);margin-bottom:.4rem}
+.adash-sub{font-family:var(--ff-m);font-size:.6rem;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;margin-bottom:1.8rem}
+.a-grid2{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+.a-card{background:var(--ink);border:1px solid var(--bord2);padding:1.5rem;border-left:2px solid var(--goldD)}
+
+/* admin form controls */
+.a-fg{display:flex;flex-direction:column;gap:5px;margin-bottom:.9rem}
+.a-fg label{font-family:var(--ff-m);font-size:.56rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.a-fg input,.a-fg select,.a-fg textarea{background:var(--dark2);border:1px solid var(--bord2);padding:10px 13px;color:var(--cream);font-size:.9rem;outline:none;width:100%;transition:border-color .2s;font-family:var(--ff-u)}
+.a-fg input:focus,.a-fg select:focus,.a-fg textarea:focus{border-color:var(--gold)}
+.a-fg textarea{min-height:90px;resize:vertical}
+.a-fg select option{background:var(--dark2)}
+.a-fg input::placeholder,.a-fg textarea::placeholder{color:var(--faint)}
+.a-2col{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.a-3col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem}
+.a-btn{padding:10px 22px;background:var(--gold);border:none;color:var(--ink);font-family:var(--ff-m);font-size:.62rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase;transition:background .2s}
+.a-btn:hover{background:var(--gold2)}
+.a-btn.del{background:none;border:1px solid #e05050;color:#e05050}
+.a-btn.del:hover{background:rgba(224,80,80,.1)}
+.a-btn.sec{background:none;border:1px solid var(--border);color:var(--gold)}
+.a-btn.sec:hover{background:var(--goldGL)}
+
+/* items list */
+.item-list{display:flex;flex-direction:column;gap:1px;background:var(--bord2);margin-top:1.2rem}
+.item-row{background:var(--dark);padding:1rem 1.2rem;display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.item-row:hover{background:var(--dark3)}
+.item-info{flex:1}
+.item-name{font-size:.92rem;font-weight:600;color:var(--cream);margin-bottom:3px}
+.item-meta{font-family:var(--ff-m);font-size:.58rem;letter-spacing:.08em;color:var(--muted)}
+.item-badge{font-family:var(--ff-m);font-size:.52rem;letter-spacing:.1em;text-transform:uppercase;padding:3px 9px;border:1px solid}
+.badge-live{color:var(--gold);border-color:var(--goldD);background:rgba(201,168,76,.08)}
+.badge-draft{color:var(--muted);border-color:var(--faint);background:transparent}
+.badge-open{color:#5fc05f;border-color:#2a6a2a;background:rgba(95,192,95,.08)}
+.badge-closed{color:#e05050;border-color:#6a2020;background:rgba(224,80,80,.08)}
+.item-actions{display:flex;gap:6px}
+
+/* casting submissions table */
+.sub-table-wrap{overflow-x:auto;margin-top:1.2rem}
+.sub-table{width:100%;border-collapse:collapse;font-size:.82rem}
+.sub-table th{background:var(--ink);padding:9px 12px;text-align:left;font-family:var(--ff-m);font-size:.56rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);border-bottom:1px solid var(--border)}
+.sub-table td{padding:10px 12px;border-bottom:1px solid var(--bord2);color:var(--muted);vertical-align:top}
+.sub-table tr:hover td{background:rgba(201,168,76,.03)}
+.sub-table td:first-child{color:var(--cream)}
+
+/* stat cards */
+.stat-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:2rem}
+.stat-c{background:var(--ink);border:1px solid var(--bord2);padding:1.2rem 1.4rem;border-top:2px solid var(--goldD)}
+.stat-c-n{font-family:var(--ff-d);font-size:2.5rem;font-weight:300;color:var(--gold);line-height:1}
+.stat-c-l{font-family:var(--ff-m);font-size:.56rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+
+/* casting form page */
+.casting-wrap{max-width:780px;margin:0 auto;padding:3rem 1.5rem}
+.casting-header{text-align:center;padding:3rem 0 2rem}
+.casting-closed{text-align:center;padding:5rem 2rem}
+.casting-closed-icon{font-size:3.5rem;margin-bottom:1.5rem}
+.casting-closed h2{font-family:var(--ff-d);font-size:2.5rem;font-weight:300;color:var(--cream);margin-bottom:1rem}
+.casting-closed p{font-size:.95rem;line-height:1.8;color:var(--muted);max-width:440px;margin:0 auto}
+
+/* toast */
+.toast{position:fixed;bottom:2rem;right:2rem;z-index:3000;padding:12px 20px;background:var(--dark);border:1px solid var(--gold);font-family:var(--ff-m);font-size:.65rem;letter-spacing:.1em;color:var(--gold);transform:translateY(80px);opacity:0;transition:all .4s var(--ease)}
+.toast.show{transform:translateY(0);opacity:1}
+
+/* mobile */
+@media(max-width:960px){
+  nav{padding:0 1.5rem}
+  .nav-links{display:none}.ham{display:flex}
+  .hero{padding:0 1.5rem 4rem}
+  .sec{padding:5rem 1.5rem}
+  .about-wrap,.contact-grid{grid-template-columns:1fr;gap:3rem}
+  .ft-grid{grid-template-columns:1fr 1fr;gap:2rem}
+  .hero-foot{flex-direction:column;align-items:flex-start;gap:2rem}
+  .movies-grid{grid-template-columns:1fr 1fr}
+  .mv-card.wide{grid-column:span 2;aspect-ratio:16/9}
+  .ptile:nth-child(1){grid-column:span 12;grid-row:span 4}
+  .ptile:nth-child(2),.ptile:nth-child(3){grid-column:span 6;grid-row:span 3}
+  .ptile:nth-child(4),.ptile:nth-child(5),.ptile:nth-child(6){grid-column:span 4;grid-row:span 3}
+  .ptile:nth-child(7),.ptile:nth-child(8){grid-column:span 6;grid-row:span 3}
+  .stat-cards{grid-template-columns:1fr 1fr}
+  .a-grid2,.a-2col,.a-3col{grid-template-columns:1fr}
+  .adash-tabs{flex-wrap:wrap}
+  footer{padding:3rem 1.5rem 2rem}
+}
+@media(max-width:600px){
+  .movies-grid{grid-template-columns:1fr}
+  .mv-card.wide{grid-column:span 1;aspect-ratio:3/2}
+  .about-pillars{grid-template-columns:1fr}
+  .ft-grid{grid-template-columns:1fr}
+  .form-row{grid-template-columns:1fr}
+  .hero-stats{flex-direction:column;gap:1.5rem}
+}
+</style>
+</head>
+<body>
+
+<!-- CURSOR -->
+<div id="cur"></div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- ══════════ ADMIN LOGIN MODAL ══════════ -->
+<div class="admin-overlay" id="adminLogin" style="display:none">
+  <div class="admin-login-box">
+    <div class="admin-logo">7ArtZone</div>
+    <div class="admin-sub">Admin Portal — Secure Access</div>
+    <div class="fg">
+      <label>Username</label>
+      <input type="text" id="adminUser" placeholder="Enter username" autocomplete="off">
+    </div>
+    <div class="fg">
+      <label>Password</label>
+      <input type="password" id="adminPass" placeholder="Enter password">
+    </div>
+    <button class="fsub" onclick="doLogin()">Sign In →</button>
+    <div class="admin-err" id="adminErr">Invalid credentials. Try again.</div>
+    <div style="margin-top:1rem">
+      <button class="btn-ghost" style="font-size:.58rem;padding:7px 14px;" onclick="document.getElementById('adminLogin').style.display='none'">← Back to Site</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ ADMIN DASHBOARD ══════════ -->
+<div id="adminDash">
+  <div class="adash-nav">
+    <div>
+      <span class="adash-logo">7ArtZone <span>Admin Portal</span></span>
+    </div>
+    <div class="adash-tabs">
+      <button class="atab on" onclick="aTab(this,'overview')">Overview</button>
+      <button class="atab" onclick="aTab(this,'projects')">Projects</button>
+      <button class="atab" onclick="aTab(this,'blogs')">Blog &amp; News</button>
+      <button class="atab" onclick="aTab(this,'casting')">Casting Forms</button>
+      <button class="atab" onclick="aTab(this,'submissions')">Submissions</button>
+    </div>
+    <button class="adash-logout" onclick="logout()">Sign Out</button>
+  </div>
+
+  <div class="adash-body">
+
+    <!-- OVERVIEW -->
+    <div class="adash-panel on" id="ap-overview">
+      <div class="adash-h">Dashboard Overview</div>
+      <div class="adash-sub">7ArtZone Entertainment — Admin Control Panel</div>
+      <div class="stat-cards" id="overviewStats">
+        <div class="stat-c"><div class="stat-c-n" id="sc-proj">0</div><div class="stat-c-l">Projects Live</div></div>
+        <div class="stat-c"><div class="stat-c-n" id="sc-blog">0</div><div class="stat-c-l">Blog Posts</div></div>
+        <div class="stat-c"><div class="stat-c-n" id="sc-cast">0</div><div class="stat-c-l">Casting Forms</div></div>
+        <div class="stat-c"><div class="stat-c-n" id="sc-sub">0</div><div class="stat-c-l">Submissions</div></div>
+      </div>
+      <div class="a-grid2">
+        <div class="a-card">
+          <div style="font-family:var(--ff-m);font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:1rem">Quick Actions</div>
+          <div style="display:flex;flex-direction:column;gap:.7rem">
+            <button class="a-btn" onclick="aTab(document.querySelector('[onclick*=projects]'),'projects')">+ Announce New Project</button>
+            <button class="a-btn sec" onclick="aTab(document.querySelector('[onclick*=blogs]'),'blogs')">+ Write Blog / News Post</button>
+            <button class="a-btn sec" onclick="aTab(document.querySelector('[onclick*=casting]'),'casting')">+ Create Casting Form</button>
+            <button class="a-btn sec" onclick="aTab(document.querySelector('[onclick*=submissions]'),'submissions')">↓ Export Submissions to Excel</button>
+          </div>
+        </div>
+        <div class="a-card">
+          <div style="font-family:var(--ff-m);font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:1rem">Recent Activity</div>
+          <div id="recentActivity" style="font-size:.85rem;color:var(--muted);line-height:1.8">No recent activity. Start by adding a project or blog post.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROJECTS -->
+    <div class="adash-panel" id="ap-projects">
+      <div class="adash-h">Announce Projects</div>
+      <div class="adash-sub">Add films, series, music projects and events to the website</div>
+      <div class="a-grid2" style="margin-bottom:2rem">
+        <div>
+          <div style="font-family:var(--ff-m);font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:1.2rem">Add New Project</div>
+          <div class="a-fg"><label>Project Title *</label><input type="text" id="p-title" placeholder="e.g. Shadows of Ahmedabad"></div>
+          <div class="a-2col">
+            <div class="a-fg"><label>Category *</label>
+              <select id="p-cat">
+                <option value="">Select</option>
+                <option>Feature Film</option><option>Web Series</option><option>Short Film</option>
+                <option>Documentary</option><option>Music Album</option><option>Live Event</option><option>VFX Reel</option>
+              </select>
+            </div>
+            <div class="a-fg"><label>Status *</label>
+              <select id="p-status">
+                <option value="">Select</option>
+                <option>In Development</option><option>Pre-Production</option>
+                <option>Production</option><option>Post-Production</option>
+                <option>Coming Soon</option><option>Released</option>
+              </select>
+            </div>
+          </div>
+          <div class="a-fg"><label>Short Description</label><textarea id="p-desc" placeholder="Brief description of the project..."></textarea></div>
+          <div class="a-2col">
+            <div class="a-fg"><label>Director / Lead</label><input type="text" id="p-director" placeholder="Name"></div>
+            <div class="a-fg"><label>Expected Release Year</label><input type="text" id="p-year" placeholder="e.g. 2026"></div>
+          </div>
+          <div class="a-fg"><label>Image URL (optional)</label><input type="text" id="p-img" placeholder="https://..."></div>
+          <div class="a-fg"><label>Visibility</label>
+            <select id="p-vis">
+              <option value="live">Live (visible on website)</option>
+              <option value="draft">Draft (hidden)</option>
+            </select>
+          </div>
+          <button class="a-btn" onclick="addProject()">Announce Project →</button>
+        </div>
+        <div>
+          <div style="font-family:var(--ff-m);font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:1.2rem">Published Projects</div>
+          <div class="item-list" id="projectList"><div style="padding:1.5rem;font-family:var(--ff-m);font-size:.65rem;color:var(--faint)">No projects yet.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BLOGS -->
+    <div class="adash-panel" id="ap-blogs">
+      <div class="adash-h">Blog &amp; News</div>
+      <div class="adash-sub">Publish announcements, behind-the-scenes, industry updates</div>
+      <div class="a-grid2" style="margin-bottom:2rem">
+        <div>
+          <div style="font-family:var(--ff-m);font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:1.2rem">Write New Post</div>
+          <div class="a-fg"><label>Post Title *</label><input type="text" id="b-title" placeholder="e.g. Behind the Scenes: Our VFX Pipeline"></div>
+          <div class="a-2col">
+            <div class="a-fg"><label>Category</label>
+              <select id="b-cat">
+                <option>Announcement</option><option>Behind the Scenes</option>
+                <option>Industry News</option><option>Company Update</option><option>Project Update</option><option>Event Recap</option>
+              </select>
+            </div>
+            <div class="a-fg"><label>Author</label><input type="text" id="b-author" placeholder="Author name"></div>
+          </div>
+          <div class="a-fg"><label>Cover Image URL (optional)</label><input type="text" id="b-img" placeholder="https://..."></div>
+          <div class="a-fg"><label>Content *</label><textarea id="b-content" style="min-height:140px" placeholder="Write your blog post content here..."></textarea></div>
+          <div class="a-fg"><label>Publish Status</label>
+            <select id="b-status">
+              <option value="live">Published (live)</option>
+              <option value="draft">Draft (hidden)</option>
+            </select>
+          </div>
+          <button class="a-btn" onclick="addBlog()">Publish Post →</button>
+        </div>
+        <div>
+          <div style="font-family:var(--ff-m);font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:1.2rem">Published Posts</div>
+          <div class="item-list" id="blogList"><div style="padding:1.5rem;font-family:var(--ff-m);font-size:.65rem;color:var(--faint)">No posts yet.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CASTING FORMS -->
+    <div class="adash-panel" id="ap-casting">
+      <div class="adash-h">Casting Form Management</div>
+      <div class="adash-sub">Create casting forms per project — open or close them anytime</div>
+      <div class="a-grid2" style="margin-bottom:2rem">
+        <div>
+          <div style="font-family:var(--ff-m);font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:1.2rem">Create Casting Form</div>
+          <div class="a-fg"><label>Project / Production Name *</label><input type="text" id="cf-project" placeholder="e.g. Shadows of Ahmedabad"></div>
+          <div class="a-fg"><label>Roles Being Cast *</label><input type="text" id="cf-roles" placeholder="e.g. Lead Actor (Male), Supporting Actress, Child Artist"></div>
+          <div class="a-fg"><label>Age Range Required</label><input type="text" id="cf-age" placeholder="e.g. 25–40 years"></div>
+          <div class="a-2col">
+            <div class="a-fg"><label>Language</label><input type="text" id="cf-lang" placeholder="e.g. Gujarati, Hindi"></div>
+            <div class="a-fg"><label>Location</label><input type="text" id="cf-loc" placeholder="e.g. Ahmedabad"></div>
+          </div>
+          <div class="a-fg"><label>Audition Date / Period</label><input type="text" id="cf-date" placeholder="e.g. January 2026 / TBD"></div>
+          <div class="a-fg"><label>Brief for Applicants</label><textarea id="cf-brief" placeholder="What to expect, what to prepare, any requirements..."></textarea></div>
+          <div class="a-fg"><label>Form Status</label>
+            <select id="cf-open">
+              <option value="open">OPEN — Accepting applications now</option>
+              <option value="closed">CLOSED — Not accepting yet</option>
+            </select>
+          </div>
+          <button class="a-btn" onclick="addCastingForm()">Create Form →</button>
+        </div>
+        <div>
+          <div style="font-family:var(--ff-m);font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:1.2rem">Casting Forms</div>
+          <div class="item-list" id="castingList"><div style="padding:1.5rem;font-family:var(--ff-m);font-size:.65rem;color:var(--faint)">No casting forms yet.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUBMISSIONS -->
+    <div class="adash-panel" id="ap-submissions">
+      <div class="adash-h">Casting Submissions</div>
+      <div class="adash-sub">All casting form responses — export to Excel anytime</div>
+      <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap">
+        <div class="a-fg" style="margin-bottom:0;min-width:200px">
+          <label>Filter by Project</label>
+          <select id="sub-filter" onchange="renderSubmissions()">
+            <option value="all">All Projects</option>
+          </select>
+        </div>
+        <button class="a-btn" style="margin-top:1.4rem" onclick="exportToExcel()">↓ Export to Excel</button>
+        <div style="font-family:var(--ff-m);font-size:.6rem;color:var(--muted);margin-top:1.4rem" id="subCount">0 submissions</div>
+      </div>
+      <div class="sub-table-wrap">
+        <table class="sub-table" id="subTable">
+          <thead>
+            <tr>
+              <th>#</th><th>Name</th><th>Age</th><th>Gender</th><th>Mobile</th>
+              <th>Email</th><th>City</th><th>Role Applied</th><th>Project</th>
+              <th>Experience</th><th>Instagram / Portfolio</th><th>Submitted</th>
+            </tr>
+          </thead>
+          <tbody id="subTbody"><tr><td colspan="12" style="text-align:center;padding:2rem;color:var(--faint)">No submissions yet.</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- adash-body -->
+</div><!-- adminDash -->
+
+<!-- ══════════ NAV ══════════ -->
+<nav id="nav">
+  <a href="#" onclick="goPage('home')" class="nav-logo">
+    <div class="logo-sq">7AZ</div>
+    7ArtZone
+  </a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#" onclick="goPage('home')" data-p="home" class="on">Home</a></li>
+    <li><a href="#" onclick="goPage('about')" data-p="about">About</a></li>
+    <li><a href="#" onclick="goPage('services')" data-p="services">Services</a></li>
+    <li><a href="#" onclick="goPage('movies')" data-p="movies">Films &amp; Series</a></li>
+    <li><a href="#" onclick="goPage('portfolio')" data-p="portfolio">Portfolio</a></li>
+    <li><a href="#" onclick="goPage('blog')" data-p="blog">Blog</a></li>
+    <li><a href="#" onclick="goPage('casting')" data-p="casting">Casting</a></li>
+    <li><a href="#" onclick="goPage('contact')" class="nav-cta-btn">Contact</a></li>
+    <li><a href="#" onclick="openAdmin()" style="color:var(--faint);font-size:.55rem">Admin</a></li>
+  </ul>
+  <button class="ham" onclick="toggleHam()"><span></span><span></span><span></span></button>
+</nav>
+
+<!-- ══════════ HOME ══════════ -->
+<div class="pg on" id="pg-home">
+  <section class="hero">
+    <div class="hero-glow"></div>
+    <div class="hero-grid"></div>
+    <div class="hero-verttext">VFX · CGI · FILM · MUSIC · EVENTS · AHMEDABAD</div>
+    <div class="hero-tag">Production &amp; Technology Company — Ahmedabad, Gujarat</div>
+    <h1 class="hero-h">
+      Where<br>
+      <em>Seven Arts</em>
+      <span class="out">Collide.</span>
+    </h1>
+    <div class="hero-foot">
+      <p class="hero-desc">7ArtZone Entertainment — a full-spectrum studio producing films, series, VFX, music and live events from the heart of Gujarat.</p>
+      <div class="hero-btns">
+        <button class="btn-gold" onclick="goPage('portfolio')">View Our Work →</button>
+        <button class="btn-ghost" onclick="goPage('movies')">Our Films</button>
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div class="hstat"><div class="hstat-n">7<sup>+</sup></div><div class="hstat-l">Disciplines</div></div>
+      <div class="hstat"><div class="hstat-n">100<sup>+</sup></div><div class="hstat-l">Specialist Crew</div></div>
+      <div class="hstat"><div class="hstat-n">∞</div><div class="hstat-l">Creative Range</div></div>
+      <div class="hstat"><div class="hstat-n">1</div><div class="hstat-l">Studio. All Services.</div></div>
+    </div>
+    <div class="scroll-cue"><i></i><span>Scroll</span></div>
+  </section>
+  <div class="ticker-wrap">
+    <div class="ticker-inner">
+      <span class="tick"><span class="tick-dot"></span>Visual Effects</span>
+      <span class="tick"><span class="tick-dot"></span>CGI &amp; Animation</span>
+      <span class="tick"><span class="tick-dot"></span>Feature Films</span>
+      <span class="tick"><span class="tick-dot"></span>Web Series</span>
+      <span class="tick"><span class="tick-dot"></span>Music Production</span>
+      <span class="tick"><span class="tick-dot"></span>Live Events</span>
+      <span class="tick"><span class="tick-dot"></span>Sound Design</span>
+      <span class="tick"><span class="tick-dot"></span>Post Production</span>
+      <span class="tick"><span class="tick-dot"></span>Visual Effects</span>
+      <span class="tick"><span class="tick-dot"></span>CGI &amp; Animation</span>
+      <span class="tick"><span class="tick-dot"></span>Feature Films</span>
+      <span class="tick"><span class="tick-dot"></span>Web Series</span>
+      <span class="tick"><span class="tick-dot"></span>Music Production</span>
+      <span class="tick"><span class="tick-dot"></span>Live Events</span>
+      <span class="tick"><span class="tick-dot"></span>Sound Design</span>
+      <span class="tick"><span class="tick-dot"></span>Post Production</span>
+    </div>
+  </div>
+  <!-- home projects preview -->
+  <div class="sec" style="background:var(--dark)">
+    <div class="sec-tag r">Latest Projects</div>
+    <h2 class="sec-h r d1">Recent <em>Announcements</em></h2>
+    <div class="gold-div r d2"></div>
+    <div class="movies-grid" id="homeProjects">
+      <div class="mv-card r d1" style="background:var(--surf)"><div class="mv-bg"><div class="mv-letter">7AZ</div></div><div class="mv-overlay"></div><div class="mv-meta"><div class="mv-genre">Coming Soon</div><div class="mv-title" style="font-size:1.1rem;color:var(--muted)">Projects will appear here once announced via the Admin Portal.</div></div></div>
+    </div>
+  </div>
+  <!-- footer -->
+  <footer>
+    <div class="ft-grid">
+      <div><div class="ft-nm">7ArtZone</div><p class="ft-p">Production &amp; Technology Company<br>Ahmedabad, Gujarat, India</p><div class="ft-socs"><a href="#" class="ft-soc">in</a><a href="#" class="ft-soc">yt</a><a href="#" class="ft-soc">ig</a><a href="#" class="ft-soc">fb</a></div></div>
+      <div><div class="ft-col-h">Navigate</div><ul class="ft-lks"><li><a href="#" onclick="goPage('home')">Home</a></li><li><a href="#" onclick="goPage('about')">About</a></li><li><a href="#" onclick="goPage('services')">Services</a></li><li><a href="#" onclick="goPage('movies')">Films &amp; Series</a></li><li><a href="#" onclick="goPage('blog')">Blog</a></li><li><a href="#" onclick="goPage('casting')">Casting</a></li></ul></div>
+      <div><div class="ft-col-h">Services</div><ul class="ft-lks"><li><a href="#">Film &amp; Series</a></li><li><a href="#">VFX &amp; CGI</a></li><li><a href="#">Music</a></li><li><a href="#">Live Events</a></li><li><a href="#">Post Production</a></li></ul></div>
+      <div><div class="ft-col-h">Legal</div><ul class="ft-lks"><li><a href="#">Privacy Policy</a></li><li><a href="#">Terms</a></li><li><a href="#">IP Policy</a></li><li><a href="#">Rules &amp; Conduct</a></li><li><a href="#" onclick="openAdmin()">Admin Login</a></li></ul></div>
+    </div>
+    <div class="ft-bot"><div class="ft-copy">© 2025 7ArtZone Entertainment Pvt. Ltd. All rights reserved.</div><div class="ft-copy">Ahmedabad, Gujarat, India</div></div>
+  </footer>
+</div>
+
+<!-- ══════════ ABOUT ══════════ -->
+<div class="pg" id="pg-about">
+  <div style="height:68px"></div>
+  <div class="sec">
+    <div class="about-wrap">
+      <div class="about-vis r">
+        <div class="about-frame"></div>
+        <div class="about-box"><div class="about-ghost">7AZ</div></div>
+        <div class="about-tag"><div class="about-tag-n">7</div><div class="about-tag-l">Arts in<br>One Studio</div></div>
+      </div>
+      <div>
+        <div class="sec-tag r">About 7ArtZone</div>
+        <h2 class="sec-h r d1">Built to Create.<br><em>Born to Entertain.</em></h2>
+        <div class="gold-div r d2"></div>
+        <div class="about-body r d2">
+          <p><strong>7ArtZone Entertainment Pvt. Ltd.</strong> is a production and technology company headquartered in Ahmedabad, Gujarat. We take our name from the seven classical arts — film, music, dance, painting, sculpture, architecture and literature.</p>
+          <p>From cinematic VFX and CGI to original music, feature films, web series and large-scale live events, we operate across the full creative spectrum with a team of over 100 specialist crew.</p>
+          <p>We have invested in high-performance rendering infrastructure and a dedicated Ahmedabad headquarters — building toward becoming one of India's most capable independent production studios.</p>
+        </div>
+        <div class="about-pillars r d3">
+          <div class="ap"><div class="ap-l">01 / VFX</div><div class="ap-v">Visual Effects</div></div>
+          <div class="ap"><div class="ap-l">02 / Film</div><div class="ap-v">Film &amp; Series</div></div>
+          <div class="ap"><div class="ap-l">03 / Music</div><div class="ap-v">Music Production</div></div>
+          <div class="ap"><div class="ap-l">04 / Events</div><div class="ap-v">Live Events</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ SERVICES ══════════ -->
+<div class="pg" id="pg-services">
+  <div style="height:68px"></div>
+  <div class="sec">
+    <div class="sec-tag r">Services</div>
+    <h2 class="sec-h r d1">Six Disciplines.<br><em>One Studio.</em></h2>
+    <div class="gold-div r d2"></div>
+    <div class="r d2">
+      <div class="svc-row r d1"><div class="svc-n">01</div><div><div class="svc-name">Film &amp; Web Series</div><div class="svc-chips"><span class="chip">Feature Film</span><span class="chip">OTT Series</span><span class="chip">Documentary</span></div></div><div class="svc-arr">↗</div></div>
+      <div class="svc-row r d2"><div class="svc-n">02</div><div><div class="svc-name">VFX &amp; CGI</div><div class="svc-chips"><span class="chip">Compositing</span><span class="chip">3D Animation</span><span class="chip">Motion Graphics</span></div></div><div class="svc-arr">↗</div></div>
+      <div class="svc-row r d3"><div class="svc-n">03</div><div><div class="svc-name">Music Production</div><div class="svc-chips"><span class="chip">Film Score</span><span class="chip">Mixing &amp; Mastering</span><span class="chip">Sound Design</span></div></div><div class="svc-arr">↗</div></div>
+      <div class="svc-row r d4"><div class="svc-n">04</div><div><div class="svc-name">Live Events &amp; Shows</div><div class="svc-chips"><span class="chip">Concerts</span><span class="chip">Award Shows</span><span class="chip">Corporate Events</span></div></div><div class="svc-arr">↗</div></div>
+      <div class="svc-row r d5"><div class="svc-n">05</div><div><div class="svc-name">Post Production</div><div class="svc-chips"><span class="chip">Colour Grading</span><span class="chip">DI Finishing</span><span class="chip">Editing</span></div></div><div class="svc-arr">↗</div></div>
+      <div class="svc-row r"><div class="svc-n">06</div><div><div class="svc-name">Brand &amp; Digital Content</div><div class="svc-chips"><span class="chip">Ad Films</span><span class="chip">Brand Films</span><span class="chip">Social Content</span></div></div><div class="svc-arr">↗</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ FILMS & SERIES ══════════ -->
+<div class="pg" id="pg-movies">
+  <div style="height:68px"></div>
+  <div class="sec">
+    <div class="sec-tag r">Films &amp; Series</div>
+    <h2 class="sec-h r d1">Our <em>Productions</em></h2>
+    <div class="gold-div r d2"></div>
+    <div id="moviesPage" class="movies-grid r d2">
+      <div class="mv-card r" style="background:var(--surf)"><div class="mv-bg"><div class="mv-letter">7AZ</div></div><div class="mv-overlay"></div><div class="mv-meta"><div class="mv-genre">Coming Soon</div><div class="mv-title" style="font-size:1rem;color:var(--muted)">Projects announced via Admin Portal will appear here.</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ PORTFOLIO ══════════ -->
+<div class="pg" id="pg-portfolio">
+  <div style="height:68px"></div>
+  <div class="sec">
+    <div class="sec-tag r">Portfolio</div>
+    <h2 class="sec-h r d1">Work &amp; <em>Showreel</em></h2>
+    <div class="gold-div r d2"></div>
+    <div class="port-grid r d2">
+      <div class="ptile"><div class="ptile-bg tb1"></div><div class="ptile-ghost">FILM</div><div class="ptile-overlay"></div><div class="ptile-meta"><div class="ptile-cat">Feature Film</div><div class="ptile-name">Cinematic Production</div></div></div>
+      <div class="ptile"><div class="ptile-bg tb2"></div><div class="ptile-ghost">VFX</div><div class="ptile-overlay"></div><div class="ptile-meta"><div class="ptile-cat">Visual Effects</div><div class="ptile-name">VFX &amp; CGI Compositing</div></div></div>
+      <div class="ptile"><div class="ptile-bg tb3"></div><div class="ptile-ghost">♪</div><div class="ptile-overlay"></div><div class="ptile-meta"><div class="ptile-cat">Music</div><div class="ptile-name">Music Production</div></div></div>
+      <div class="ptile"><div class="ptile-bg tb4"></div><div class="ptile-ghost">WEB</div><div class="ptile-overlay"></div><div class="ptile-meta"><div class="ptile-cat">Web Series</div><div class="ptile-name">Digital Series</div></div></div>
+      <div class="ptile"><div class="ptile-bg tb5"></div><div class="ptile-ghost">3D</div><div class="ptile-overlay"></div><div class="ptile-meta"><div class="ptile-cat">CGI</div><div class="ptile-name">3D Animation</div></div></div>
+      <div class="ptile"><div class="ptile-bg tb6"></div><div class="ptile-ghost">LIVE</div><div class="ptile-overlay"></div><div class="ptile-meta"><div class="ptile-cat">Events</div><div class="ptile-name">Live Productions</div></div></div>
+      <div class="ptile"><div class="ptile-bg tb7"></div><div class="ptile-ghost">AD</div><div class="ptile-overlay"></div><div class="ptile-meta"><div class="ptile-cat">Brand</div><div class="ptile-name">Brand &amp; Ad Films</div></div></div>
+      <div class="ptile"><div class="ptile-bg tb8"></div><div class="ptile-ghost">POST</div><div class="ptile-overlay"></div><div class="ptile-meta"><div class="ptile-cat">Post</div><div class="ptile-name">Colour &amp; DI</div></div></div>
+    </div>
+    <div style="margin-top:2rem;text-align:center" class="r">
+      <button class="btn-ghost" onclick="goPage('contact')">Request Full Showreel →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ BLOG ══════════ -->
+<div class="pg" id="pg-blog">
+  <div style="height:68px"></div>
+  <div class="sec">
+    <div class="sec-tag r">Blog &amp; News</div>
+    <h2 class="sec-h r d1">Latest <em>Updates</em></h2>
+    <div class="gold-div r d2"></div>
+    <div id="blogPage" class="r d2" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1.5rem">
+      <div style="padding:3rem;text-align:center;border:1px solid var(--bord2);color:var(--muted);font-size:.9rem">Blog posts published via the Admin Portal will appear here.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ CASTING ══════════ -->
+<div class="pg" id="pg-casting">
+  <div style="height:68px"></div>
+  <div class="sec">
+    <div class="sec-tag r">Open Calls</div>
+    <h2 class="sec-h r d1"><em>Casting</em> Calls</h2>
+    <div class="gold-div r d2"></div>
+    <div id="castingPage" class="r d2"></div>
+  </div>
+</div>
+
+<!-- ══════════ CASTING FORM ══════════ -->
+<div class="pg" id="pg-castingForm">
+  <div style="height:68px"></div>
+  <div class="casting-wrap">
+    <div id="castingFormContent"></div>
+  </div>
+</div>
+
+<!-- ══════════ CONTACT ══════════ -->
+<div class="pg" id="pg-contact">
+  <div style="height:68px"></div>
+  <div class="sec">
+    <div class="contact-grid">
+      <div>
+        <div class="sec-tag r">Get in Touch</div>
+        <h2 class="sec-h r d1">Let's Build<br><em>Something Great</em></h2>
+        <div class="gold-div r d2"></div>
+        <p class="r d2" style="color:var(--muted);font-size:.95rem;line-height:1.85;margin-bottom:2.5rem">Whether you're looking for a production partner, want to join our crew, or have a project in mind — we'd love to hear from you.</p>
+        <div class="contact-items r d3">
+          <div class="ci"><div class="ci-ic">📍</div><div><div class="ci-lbl">Location</div><div class="ci-val">Ahmedabad, Gujarat, India</div></div></div>
+          <div class="ci"><div class="ci-ic">✉</div><div><div class="ci-lbl">Email</div><div class="ci-val"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="3e565b5252517e095f4c4a4451505b105d5153">[email&#160;protected]</a></div></div></div>
+          <div class="ci"><div class="ci-ic">🎬</div><div><div class="ci-lbl">Productions</div><div class="ci-val">Film · Series · Music · VFX · Events</div></div></div>
+          <div class="ci"><div class="ci-ic">👥</div><div><div class="ci-lbl">Crew &amp; Careers</div><div class="ci-val"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="cdaeacbfa8a8bfbe8dfaacbfb9b7a2a3a8e3aea2a0">[email&#160;protected]</a></div></div></div>
+        </div>
+      </div>
+      <div class="form-box r d2">
+        <div class="form-row">
+          <div class="fg"><label>First Name</label><input type="text" placeholder="First name"></div>
+          <div class="fg"><label>Last Name</label><input type="text" placeholder="Last name"></div>
+        </div>
+        <div class="form-row">
+          <div class="fg"><label>Email</label><input type="email" placeholder="your@email.com"></div>
+          <div class="fg"><label>Phone</label><input type="tel" placeholder="+91 XXXXX XXXXX"></div>
+        </div>
+        <div class="fg"><label>Enquiry Type</label>
+          <select>
+            <option value="">Select</option>
+            <option>Film / Series Collaboration</option><option>VFX / CGI Services</option>
+            <option>Music Production</option><option>Live Event</option>
+            <option>Brand Film</option><option>Joining the Crew</option><option>Other</option>
+          </select>
+        </div>
+        <div class="fg"><label>Message</label><textarea placeholder="Tell us about your project..."></textarea></div>
+        <button class="fsub" onclick="contactSubmit(this)">Send Message →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+/* ════════════════════════════════════
+   CURSOR
+════════════════════════════════════ */
+const cur = document.getElementById('cur');
+document.addEventListener('mousemove', e => {
+  cur.style.left = e.clientX + 'px';
+  cur.style.top  = e.clientY + 'px';
+});
+document.querySelectorAll('a,button,.svc-row,.mv-card,.ptile,.ap,.ci').forEach(el => {
+  el.addEventListener('mouseenter', () => cur.classList.add('big'));
+  el.addEventListener('mouseleave', () => cur.classList.remove('big'));
+});
+
+/* ════════════════════════════════════
+   NAV
+════════════════════════════════════ */
+const navEl = document.getElementById('nav');
+window.addEventListener('scroll', () => navEl.classList.toggle('solid', window.scrollY > 20));
+navEl.classList.add('solid');
+
+function toggleHam() {
+  const m = document.getElementById('navLinks');
+  m.style.cssText = m.style.display === 'flex'
+    ? ''
+    : 'display:flex;flex-direction:column;position:fixed;top:68px;left:0;right:0;background:rgba(8,7,4,.97);padding:2rem 1.5rem;gap:1.5rem;border-bottom:1px solid var(--border);z-index:799;';
+}
+
+/* ════════════════════════════════════
+   PAGE SYSTEM
+════════════════════════════════════ */
+function goPage(name) {
+  document.querySelectorAll('.pg').forEach(p => p.classList.remove('on'));
+  document.getElementById('pg-' + name).classList.add('on');
+  document.querySelectorAll('[data-p]').forEach(a => a.classList.toggle('on', a.dataset.p === name));
+  window.scrollTo(0, 0);
+  setTimeout(runReveal, 80);
+  const m = document.getElementById('navLinks');
+  m.style.cssText = '';
+  if (name === 'movies') renderMoviesPage();
+  if (name === 'blog')   renderBlogPage();
+  if (name === 'casting') renderCastingPage();
+  return false;
+}
+
+/* ════════════════════════════════════
+   REVEAL
+════════════════════════════════════ */
+function runReveal() {
+  const els = document.querySelectorAll('.pg.on .r:not(.vis)');
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('vis'); });
+  }, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
+  els.forEach(el => obs.observe(el));
+  document.querySelectorAll('#pg-home .r').forEach((el, i) => {
+    setTimeout(() => el.classList.add('vis'), i * 80);
+  });
+}
+setTimeout(runReveal, 200);
+
+/* ════════════════════════════════════
+   DATA STORE (localStorage)
+════════════════════════════════════ */
+function getData(key) { try { return JSON.parse(localStorage.getItem('7az_'+key)||'[]'); } catch { return []; } }
+function setData(key, val) { localStorage.setItem('7az_'+key, JSON.stringify(val)); }
+
+/* ════════════════════════════════════
+   TOAST
+════════════════════════════════════ */
+function showToast(msg, duration=3000) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), duration);
+}
+
+/* ════════════════════════════════════
+   ADMIN AUTH
+════════════════════════════════════ */
+const ADMIN_USER = '7artzone';
+const ADMIN_PASS = 'admin@7az2025';
+
+function openAdmin() {
+  document.getElementById('adminLogin').style.display = 'flex';
+}
+function doLogin() {
+  const u = document.getElementById('adminUser').value.trim();
+  const p = document.getElementById('adminPass').value.trim();
+  if (u === ADMIN_USER && p === ADMIN_PASS) {
+    document.getElementById('adminLogin').style.display = 'none';
+    document.getElementById('adminDash').style.display = 'block';
+    refreshOverview();
+    renderAdminProjects();
+    renderAdminBlogs();
+    renderAdminCasting();
+    renderSubmissions();
+  } else {
+    document.getElementById('adminErr').style.display = 'block';
+  }
+}
+function logout() {
+  document.getElementById('adminDash').style.display = 'none';
+}
+
+/* ════════════════════════════════════
+   ADMIN TABS
+════════════════════════════════════ */
+function aTab(btn, name) {
+  document.querySelectorAll('.atab').forEach(b => b.classList.remove('on'));
+  document.querySelectorAll('.adash-panel').forEach(p => p.classList.remove('on'));
+  if (btn) btn.classList.add('on');
+  document.getElementById('ap-' + name).classList.add('on');
+  if (name === 'submissions') { renderSubmissions(); updateSubFilter(); }
+}
+
+/* ════════════════════════════════════
+   OVERVIEW
+════════════════════════════════════ */
+function refreshOverview() {
+  const projects = getData('projects');
+  const blogs    = getData('blogs');
+  const castings = getData('castings');
+  const subs     = getData('submissions');
+  document.getElementById('sc-proj').textContent = projects.filter(p=>p.vis==='live').length;
+  document.getElementById('sc-blog').textContent = blogs.filter(b=>b.status==='live').length;
+  document.getElementById('sc-cast').textContent = castings.length;
+  document.getElementById('sc-sub').textContent  = subs.length;
+  const recent = [...projects.slice(-2),...blogs.slice(-2)].map(x=>
+    `<div style="padding:6px 0;border-bottom:1px solid var(--bord2)">
+      <span style="color:var(--gold);font-family:var(--ff-m);font-size:.56rem;letter-spacing:.1em;text-transform:uppercase">${x.cat||x.category||'Post'}</span>
+      <span style="color:var(--cream);margin-left:8px;font-size:.88rem">${x.title}</span>
+    </div>`).join('');
+  document.getElementById('recentActivity').innerHTML = recent || 'No recent activity.';
+}
+
+/* ════════════════════════════════════
+   PROJECTS
+════════════════════════════════════ */
+function addProject() {
+  const title  = document.getElementById('p-title').value.trim();
+  const cat    = document.getElementById('p-cat').value;
+  const status = document.getElementById('p-status').value;
+  const desc   = document.getElementById('p-desc').value.trim();
+  const dir    = document.getElementById('p-director').value.trim();
+  const year   = document.getElementById('p-year').value.trim();
+  const img    = document.getElementById('p-img').value.trim();
+  const vis    = document.getElementById('p-vis').value;
+  if (!title || !cat || !status) { showToast('Fill in the required fields.'); return; }
+  const projects = getData('projects');
+  projects.push({ id: Date.now(), title, cat, status, desc, dir, year, img, vis, date: new Date().toLocaleDateString('en-IN') });
+  setData('projects', projects);
+  ['p-title','p-desc','p-director','p-year','p-img'].forEach(id => document.getElementById(id).value='');
+  showToast('Project announced!');
+  renderAdminProjects();
+  refreshOverview();
+}
+function deleteProject(id) {
+  setData('projects', getData('projects').filter(p=>p.id!==id));
+  renderAdminProjects(); refreshOverview();
+  showToast('Project deleted.');
+}
+function toggleProjectVis(id) {
+  const projs = getData('projects');
+  const p = projs.find(x=>x.id===id);
+  if (p) p.vis = p.vis==='live'?'draft':'live';
+  setData('projects', projs);
+  renderAdminProjects(); refreshOverview();
+}
+function renderAdminProjects() {
+  const list = document.getElementById('projectList');
+  const projs = getData('projects');
+  if (!projs.length) { list.innerHTML='<div style="padding:1.5rem;font-family:var(--ff-m);font-size:.65rem;color:var(--faint)">No projects yet.</div>'; return; }
+  list.innerHTML = projs.map(p=>`
+    <div class="item-row">
+      <div class="item-info">
+        <div class="item-name">${p.title}</div>
+        <div class="item-meta">${p.cat} · ${p.status} · ${p.date}</div>
+      </div>
+      <span class="item-badge ${p.vis==='live'?'badge-live':'badge-draft'}">${p.vis}</span>
+      <div class="item-actions">
+        <button class="a-btn sec" style="padding:5px 11px;font-size:.55rem" onclick="toggleProjectVis(${p.id})">${p.vis==='live'?'Hide':'Show'}</button>
+        <button class="a-btn del" style="padding:5px 11px;font-size:.55rem" onclick="deleteProject(${p.id})">Del</button>
+      </div>
+    </div>`).join('');
+}
+function renderMoviesPage() {
+  const projs = getData('projects').filter(p=>p.vis==='live');
+  const homeEl = document.getElementById('homeProjects');
+  const mvEl   = document.getElementById('moviesPage');
+  if (!projs.length) {
+    const empty = `<div class="mv-card" style="background:var(--surf)"><div class="mv-bg"><div class="mv-letter">7AZ</div></div><div class="mv-overlay"></div><div class="mv-meta"><div class="mv-genre">Coming Soon</div><div class="mv-title" style="font-size:1rem;color:var(--muted)">No announcements yet.</div></div></div>`;
+    homeEl.innerHTML = empty; mvEl.innerHTML = empty; return;
+  }
+  const cards = projs.map((p,i)=>`
+    <div class="mv-card ${i===0?'wide':''}" style="background:var(--surf)">
+      ${p.img?`<img src="${p.img}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.4" alt="">`:
+        `<div class="mv-bg"><div class="mv-letter">${p.title.substring(0,3).toUpperCase()}</div></div>`}
+      <div class="mv-overlay"></div>
+      <div class="mv-meta">
+        <div class="mv-genre">${p.cat}</div>
+        <div class="mv-title">${p.title}</div>
+        <div class="mv-status ${p.status.includes('Coming')||p.status.includes('Pre')?'soon':p.status.includes('Dev')||p.status.includes('Production')?'dev':''}">${p.status}</div>
+      </div>
+      <div class="mv-hover-icon">▶</div>
+    </div>`).join('');
+  homeEl.innerHTML = cards;
+  mvEl.innerHTML   = cards;
+}
+
+/* ════════════════════════════════════
+   BLOGS
+════════════════════════════════════ */
+function addBlog() {
+  const title   = document.getElementById('b-title').value.trim();
+  const cat     = document.getElementById('b-cat').value;
+  const author  = document.getElementById('b-author').value.trim() || '7ArtZone';
+  const img     = document.getElementById('b-img').value.trim();
+  const content = document.getElementById('b-content').value.trim();
+  const status  = document.getElementById('b-status').value;
+  if (!title||!content) { showToast('Title and content required.'); return; }
+  const blogs = getData('blogs');
+  blogs.push({ id: Date.now(), title, cat, author, img, content, status, date: new Date().toLocaleDateString('en-IN') });
+  setData('blogs', blogs);
+  ['b-title','b-author','b-img','b-content'].forEach(id => document.getElementById(id).value='');
+  showToast('Blog post published!');
+  renderAdminBlogs(); refreshOverview();
+}
+function deleteBlog(id) {
+  setData('blogs', getData('blogs').filter(b=>b.id!==id));
+  renderAdminBlogs(); refreshOverview();
+  showToast('Blog deleted.');
+}
+function toggleBlogStatus(id) {
+  const blogs = getData('blogs');
+  const b = blogs.find(x=>x.id===id);
+  if (b) b.status = b.status==='live'?'draft':'live';
+  setData('blogs', blogs);
+  renderAdminBlogs(); refreshOverview();
+}
+function renderAdminBlogs() {
+  const list = document.getElementById('blogList');
+  const blogs = getData('blogs');
+  if (!blogs.length) { list.innerHTML='<div style="padding:1.5rem;font-family:var(--ff-m);font-size:.65rem;color:var(--faint)">No posts yet.</div>'; return; }
+  list.innerHTML = blogs.map(b=>`
+    <div class="item-row">
+      <div class="item-info">
+        <div class="item-name">${b.title}</div>
+        <div class="item-meta">${b.cat} · ${b.author} · ${b.date}</div>
+      </div>
+      <span class="item-badge ${b.status==='live'?'badge-live':'badge-draft'}">${b.status}</span>
+      <div class="item-actions">
+        <button class="a-btn sec" style="padding:5px 11px;font-size:.55rem" onclick="toggleBlogStatus(${b.id})">${b.status==='live'?'Hide':'Show'}</button>
+        <button class="a-btn del" style="padding:5px 11px;font-size:.55rem" onclick="deleteBlog(${b.id})">Del</button>
+      </div>
+    </div>`).join('');
+}
+function renderBlogPage() {
+  const posts = getData('blogs').filter(b=>b.status==='live');
+  const el = document.getElementById('blogPage');
+  if (!posts.length) {
+    el.innerHTML='<div style="padding:3rem;text-align:center;border:1px solid var(--bord2);color:var(--muted)">No blog posts yet. Check back soon.</div>';
+    return;
+  }
+  el.innerHTML = posts.map(b=>`
+    <div style="background:var(--dark);border:1px solid var(--bord2);overflow:hidden;cursor:default">
+      ${b.img?`<img src="${b.img}" style="width:100%;height:200px;object-fit:cover;display:block" alt="">`:
+        `<div style="width:100%;height:130px;background:var(--surf);display:flex;align-items:center;justify-content:center"><span style="font-family:var(--ff-d);font-size:4rem;color:rgba(201,168,76,.08)">${b.cat.substring(0,1)}</span></div>`}
+      <div style="padding:1.4rem">
+        <div style="font-family:var(--ff-m);font-size:.56rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:8px">${b.cat} · ${b.date}</div>
+        <div style="font-family:var(--ff-d);font-size:1.3rem;font-weight:400;color:var(--cream);margin-bottom:.8rem;line-height:1.2">${b.title}</div>
+        <div style="font-size:.85rem;line-height:1.75;color:var(--muted)">${b.content.substring(0,200)}${b.content.length>200?'…':''}</div>
+        <div style="margin-top:.8rem;font-family:var(--ff-m);font-size:.58rem;color:var(--faint)">By ${b.author}</div>
+      </div>
+    </div>`).join('');
+}
+
+/* ════════════════════════════════════
+   CASTING FORMS
+════════════════════════════════════ */
+function addCastingForm() {
+  const project = document.getElementById('cf-project').value.trim();
+  const roles   = document.getElementById('cf-roles').value.trim();
+  const age     = document.getElementById('cf-age').value.trim();
+  const lang    = document.getElementById('cf-lang').value.trim();
+  const loc     = document.getElementById('cf-loc').value.trim();
+  const date    = document.getElementById('cf-date').value.trim();
+  const brief   = document.getElementById('cf-brief').value.trim();
+  const open    = document.getElementById('cf-open').value;
+  if (!project||!roles) { showToast('Project name and roles are required.'); return; }
+  const castings = getData('castings');
+  castings.push({ id: Date.now(), project, roles, age, lang, loc, date, brief, open, created: new Date().toLocaleDateString('en-IN') });
+  setData('castings', castings);
+  ['cf-project','cf-roles','cf-age','cf-lang','cf-loc','cf-date','cf-brief'].forEach(id=>document.getElementById(id).value='');
+  showToast('Casting form created!');
+  renderAdminCasting(); refreshOverview();
+}
+function toggleCastingOpen(id) {
+  const castings = getData('castings');
+  const c = castings.find(x=>x.id===id);
+  if (c) c.open = c.open==='open'?'closed':'open';
+  setData('castings', castings);
+  renderAdminCasting(); refreshOverview();
+  showToast(`Form is now ${c.open.toUpperCase()}.`);
+}
+function deleteCasting(id) {
+  setData('castings', getData('castings').filter(c=>c.id!==id));
+  renderAdminCasting(); refreshOverview();
+  showToast('Casting form deleted.');
+}
+function renderAdminCasting() {
+  const list = document.getElementById('castingList');
+  const castings = getData('castings');
+  if (!castings.length) { list.innerHTML='<div style="padding:1.5rem;font-family:var(--ff-m);font-size:.65rem;color:var(--faint)">No forms yet.</div>'; return; }
+  list.innerHTML = castings.map(c=>`
+    <div class="item-row">
+      <div class="item-info">
+        <div class="item-name">${c.project}</div>
+        <div class="item-meta">Roles: ${c.roles.substring(0,50)} · ${c.created}</div>
+      </div>
+      <span class="item-badge ${c.open==='open'?'badge-open':'badge-closed'}">${c.open}</span>
+      <div class="item-actions">
+        <button class="a-btn sec" style="padding:5px 11px;font-size:.55rem" onclick="toggleCastingOpen(${c.id})">${c.open==='open'?'Close':'Open'}</button>
+        <button class="a-btn del" style="padding:5px 11px;font-size:.55rem" onclick="deleteCasting(${c.id})">Del</button>
+      </div>
+    </div>`).join('');
+}
+function renderCastingPage() {
+  const castings = getData('castings');
+  const el = document.getElementById('castingPage');
+  if (!castings.length) {
+    el.innerHTML='<div style="padding:4rem;text-align:center;border:1px solid var(--bord2);color:var(--muted)"><div style="font-size:2rem;margin-bottom:1rem">🎬</div>No casting calls open at this time. Check back soon.</div>';
+    return;
+  }
+  el.innerHTML = castings.map(c=>`
+    <div style="background:var(--dark);border:1px solid var(--bord2);border-left:3px solid ${c.open==='open'?'var(--gold)':'var(--faint)'};padding:2rem;margin-bottom:1px;display:flex;justify-content:space-between;align-items:flex-start;gap:2rem;flex-wrap:wrap">
+      <div style="flex:1;min-width:240px">
+        <div style="font-family:var(--ff-m);font-size:.56rem;letter-spacing:.14em;text-transform:uppercase;color:${c.open==='open'?'var(--gold)':'var(--muted)'};margin-bottom:8px">
+          ${c.open==='open'?'● OPEN — Accepting Applications':'● CLOSED — Not Accepting Yet'}
+        </div>
+        <div style="font-family:var(--ff-d);font-size:1.6rem;font-weight:400;color:var(--cream);margin-bottom:.6rem">${c.project}</div>
+        <div style="font-size:.88rem;color:var(--muted);margin-bottom:.5rem"><strong style="color:var(--cream)">Roles:</strong> ${c.roles}</div>
+        ${c.age?`<div style="font-size:.85rem;color:var(--muted)"><strong style="color:var(--cream)">Age:</strong> ${c.age}</div>`:''}
+        ${c.lang?`<div style="font-size:.85rem;color:var(--muted)"><strong style="color:var(--cream)">Language:</strong> ${c.lang}</div>`:''}
+        ${c.loc?`<div style="font-size:.85rem;color:var(--muted)"><strong style="color:var(--cream)">Location:</strong> ${c.loc}</div>`:''}
+        ${c.date?`<div style="font-size:.85rem;color:var(--muted)"><strong style="color:var(--cream)">Audition Period:</strong> ${c.date}</div>`:''}
+        ${c.brief?`<div style="margin-top:.8rem;font-size:.85rem;line-height:1.75;color:var(--muted)">${c.brief}</div>`:''}
+      </div>
+      <div>
+        ${c.open==='open'
+          ? `<button class="btn-gold" onclick="openCastingForm(${c.id})">Apply Now →</button>`
+          : `<div style="padding:10px 22px;border:1px solid var(--faint);font-family:var(--ff-m);font-size:.62rem;letter-spacing:.12em;color:var(--faint);text-transform:uppercase">Closed</div>`
+        }
+      </div>
+    </div>`).join('');
+}
+function openCastingForm(castingId) {
+  const casting = getData('castings').find(c=>c.id===castingId);
+  if (!casting) return;
+  if (casting.open !== 'open') { showToast('This casting call is currently closed.'); return; }
+  const el = document.getElementById('castingFormContent');
+  el.innerHTML = `
+    <div style="text-align:center;padding:3rem 0 2rem">
+      <div style="font-family:var(--ff-m);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--goldD);margin-bottom:.8rem;display:flex;align-items:center;justify-content:center;gap:8px"><span style="width:24px;height:1px;background:var(--gold);display:inline-block"></span>Casting Application<span style="width:24px;height:1px;background:var(--gold);display:inline-block"></span></div>
+      <div style="font-family:var(--ff-d);font-size:2.5rem;font-weight:300;color:var(--cream);margin-bottom:.4rem">${casting.project}</div>
+      <div style="font-size:.9rem;color:var(--muted)">Roles: ${casting.roles}</div>
+    </div>
+    <div class="form-box">
+      <div class="form-row">
+        <div class="fg"><label>Full Name *</label><input type="text" id="ca-name" placeholder="Your full name"></div>
+        <div class="fg"><label>Date of Birth *</label><input type="date" id="ca-dob"></div>
+      </div>
+      <div class="form-row">
+        <div class="fg"><label>Gender *</label>
+          <select id="ca-gender"><option value="">Select</option><option>Male</option><option>Female</option><option>Other</option></select>
+        </div>
+        <div class="fg"><label>Age *</label><input type="number" id="ca-age" placeholder="Your age" min="1" max="120"></div>
+      </div>
+      <div class="form-row">
+        <div class="fg"><label>Mobile Number *</label><input type="tel" id="ca-mobile" placeholder="+91 XXXXX XXXXX"></div>
+        <div class="fg"><label>Email *</label><input type="email" id="ca-email" placeholder="your@email.com"></div>
+      </div>
+      <div class="form-row">
+        <div class="fg"><label>City / Location *</label><input type="text" id="ca-city" placeholder="Your city"></div>
+        <div class="fg"><label>State</label><input type="text" id="ca-state" placeholder="State"></div>
+      </div>
+      <div class="fg"><label>Role Applying For *</label>
+        <select id="ca-role">
+          <option value="">Select role</option>
+          ${casting.roles.split(',').map(r=>`<option value="${r.trim()}">${r.trim()}</option>`).join('')}
+        </select>
+      </div>
+      <div class="fg"><label>Acting / Performance Experience</label>
+        <select id="ca-exp">
+          <option value="">Select</option>
+          <option>No prior experience (Fresher)</option>
+          <option>1–2 years</option><option>3–5 years</option>
+          <option>5+ years</option><option>Professional (Theatre / Film / TV)</option>
+        </select>
+      </div>
+      <div class="fg"><label>Previous Work / Projects (if any)</label>
+        <textarea id="ca-prev" placeholder="List any previous films, shows, theatre, events, or other work..."></textarea>
+      </div>
+      <div class="fg"><label>Physical Description (Height, Build — optional)</label>
+        <input type="text" id="ca-phys" placeholder="e.g. 5'9\", Athletic build"></div>
+      <div class="fg"><label>Languages Spoken *</label>
+        <input type="text" id="ca-langs" placeholder="e.g. Gujarati (Native), Hindi (Fluent), English (Basic)"></div>
+      <div class="fg"><label>Instagram Handle / Portfolio Link (optional)</label>
+        <input type="text" id="ca-insta" placeholder="@yourhandle or portfolio URL"></div>
+      <div class="fg"><label>Special Skills (dancing, singing, stunts, martial arts, etc.)</label>
+        <input type="text" id="ca-skills" placeholder="List any special skills or talents"></div>
+      <div class="fg"><label>Are you available for the audition / shoot schedule?</label>
+        <select id="ca-avail">
+          <option>Yes — fully available</option>
+          <option>Yes — with some scheduling constraints</option>
+          <option>Not sure yet</option>
+        </select>
+      </div>
+      <div class="fg"><label>Additional Message (optional)</label>
+        <textarea id="ca-msg" placeholder="Anything else you'd like us to know..."></textarea>
+      </div>
+      <div style="margin:.8rem 0;padding:.8rem;background:var(--dark2);border:1px solid var(--bord2)">
+        <div style="font-family:var(--ff-m);font-size:.58rem;letter-spacing:.1em;color:var(--muted)">
+          ✓ By submitting, I confirm the information is accurate. I consent to 7ArtZone Entertainment Pvt. Ltd. storing and processing my data for casting purposes.
+        </div>
+      </div>
+      <button class="fsub" onclick="submitCasting(${castingId})">Submit Application →</button>
+    </div>
+    <div style="text-align:center;margin-top:1.5rem">
+      <button class="btn-ghost" onclick="goPage('casting')">← Back to Casting Calls</button>
+    </div>
+  `;
+  goPage('castingForm');
+}
+function submitCasting(castingId) {
+  const name   = document.getElementById('ca-name')?.value.trim();
+  const dob    = document.getElementById('ca-dob')?.value;
+  const gender = document.getElementById('ca-gender')?.value;
+  const age    = document.getElementById('ca-age')?.value;
+  const mobile = document.getElementById('ca-mobile')?.value.trim();
+  const email  = document.getElementById('ca-email')?.value.trim();
+  const city   = document.getElementById('ca-city')?.value.trim();
+  const state  = document.getElementById('ca-state')?.value.trim();
+  const role   = document.getElementById('ca-role')?.value;
+  const exp    = document.getElementById('ca-exp')?.value;
+  const prev   = document.getElementById('ca-prev')?.value.trim();
+  const phys   = document.getElementById('ca-phys')?.value.trim();
+  const langs  = document.getElementById('ca-langs')?.value.trim();
+  const insta  = document.getElementById('ca-insta')?.value.trim();
+  const skills = document.getElementById('ca-skills')?.value.trim();
+  const avail  = document.getElementById('ca-avail')?.value;
+  const msg    = document.getElementById('ca-msg')?.value.trim();
+  const casting = getData('castings').find(c=>c.id===castingId);
+  if (!name||!gender||!mobile||!email||!city||!role||!langs) {
+    showToast('Please fill all required fields (*).');
+    return;
+  }
+  const subs = getData('submissions');
+  subs.push({
+    id: Date.now(),
+    castingId,
+    project: casting?.project||'',
+    name, dob, gender, age, mobile, email, city, state,
+    role, exp, prev, phys, langs, insta, skills, avail, msg,
+    submitted: new Date().toLocaleString('en-IN')
+  });
+  setData('submissions', subs);
+  document.getElementById('castingFormContent').innerHTML = `
+    <div style="text-align:center;padding:5rem 2rem">
+      <div style="font-size:3rem;margin-bottom:1.5rem">✨</div>
+      <div style="font-family:var(--ff-d);font-size:2.5rem;font-weight:300;color:var(--cream);margin-bottom:1rem">Application Received!</div>
+      <p style="font-size:.95rem;line-height:1.85;color:var(--muted);max-width:440px;margin:0 auto 2rem">
+        Thank you, <strong style="color:var(--gold)">${name}</strong>. Your application for <strong style="color:var(--gold)">${casting?.project}</strong> has been submitted. We will contact you if shortlisted.
+      </p>
+      <button class="btn-gold" onclick="goPage('casting')">← Back to Casting Calls</button>
+    </div>
+  `;
+  refreshOverview();
+}
+
+/* ════════════════════════════════════
+   SUBMISSIONS & EXCEL EXPORT
+════════════════════════════════════ */
+function updateSubFilter() {
+  const sel = document.getElementById('sub-filter');
+  const castings = getData('castings');
+  const current = sel.value;
+  sel.innerHTML = '<option value="all">All Projects</option>' +
+    castings.map(c=>`<option value="${c.id}" ${current==c.id?'selected':''}>${c.project}</option>`).join('');
+}
+function renderSubmissions() {
+  const filter = document.getElementById('sub-filter')?.value || 'all';
+  let subs = getData('submissions');
+  if (filter !== 'all') subs = subs.filter(s=>s.castingId == filter);
+  const tbody = document.getElementById('subTbody');
+  const count = document.getElementById('subCount');
+  if (count) count.textContent = subs.length + ' submission' + (subs.length!==1?'s':'');
+  if (!subs.length) {
+    tbody.innerHTML='<tr><td colspan="12" style="text-align:center;padding:2rem;color:var(--faint)">No submissions.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = subs.map((s,i)=>`
+    <tr>
+      <td>${i+1}</td>
+      <td style="color:var(--cream);font-weight:600;white-space:nowrap">${s.name}</td>
+      <td>${s.age||'—'}</td>
+      <td>${s.gender||'—'}</td>
+      <td style="white-space:nowrap">${s.mobile}</td>
+      <td>${s.email}</td>
+      <td>${s.city}${s.state?', '+s.state:''}</td>
+      <td>${s.role}</td>
+      <td style="color:var(--gold)">${s.project}</td>
+      <td>${s.exp||'—'}</td>
+      <td>${s.insta||'—'}</td>
+      <td style="white-space:nowrap;font-size:.75rem">${s.submitted}</td>
+    </tr>`).join('');
+}
+function exportToExcel() {
+  const filter = document.getElementById('sub-filter')?.value || 'all';
+  let subs = getData('submissions');
+  if (filter !== 'all') subs = subs.filter(s=>s.castingId == filter);
+  if (!subs.length) { showToast('No submissions to export.'); return; }
+  const headers = [
+    'Full Name','Date of Birth','Gender','Age','Mobile','Email','City','State',
+    'Role Applied','Project','Experience','Previous Work','Physical Description',
+    'Languages','Instagram / Portfolio','Special Skills','Availability',
+    'Additional Message','Submitted On'
+  ];
+  const rows = subs.map(s=>[
+    s.name||'', s.dob||'', s.gender||'', s.age||'', s.mobile||'', s.email||'',
+    s.city||'', s.state||'', s.role||'', s.project||'', s.exp||'', s.prev||'',
+    s.phys||'', s.langs||'', s.insta||'', s.skills||'', s.avail||'', s.msg||'',
+    s.submitted||''
+  ]);
+  const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
+  // Style header row width
+  ws['!cols'] = headers.map(h => ({ wch: Math.max(h.length + 4, 18) }));
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Casting Submissions');
+  const fname = filter==='all'
+    ? `7ArtZone_Casting_All_${new Date().toISOString().slice(0,10)}.xlsx`
+    : `7ArtZone_Casting_${getData('castings').find(c=>c.id==filter)?.project||'Project'}_${new Date().toISOString().slice(0,10)}.xlsx`;
+  XLSX.writeFile(wb, fname);
+  showToast('Excel file downloaded!');
+}
+
+/* ════════════════════════════════════
+   CONTACT
+════════════════════════════════════ */
+function contactSubmit(btn) {
+  btn.textContent
